@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامه هفتگی استفاده از لباس شویی</title>
+    <style>
+        :root {
+            --primary-bg: #f8f9fa;
+            --border-color: #bcbcbc;
+            --header-bg: #e0e0e0;
+            --text-color: #000;
+        }
+
+        body {
+            font-family: 'Tahoma', sans-serif;
+            background-color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid var(--border-color);
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 0;
+            vertical-align: top;
+        }
+
+        /* استایل هدر */
+        th {
+            background-color: var(--header-bg);
+            padding: 15px 5px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* ستون روزها */
+        .day-column {
+            width: 50px;
+            background-color: #fff;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* خطوط داخل هر سلول (شبیه دفترچه) */
+        .entry-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            min-height: 120px;
+        }
+
+        .entry-item {
+            border-bottom: 1px solid #ddd;
+            padding: 8px 10px;
+            font-size: 1.1rem;
+            min-height: 20px;
+            font-weight: 600;
+        }
+
+        .entry-item:last-child {
+            border-bottom: none;
+        }
+
+        .empty-line {
+            height: 3000px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* ریسپانسیو */
+        @media (max-width: 768px) {
+            table { font-size: 0.8rem; }
+            .day-column { width: 60px; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>برنامه هفتگی استفاده از لباسشویی</h1>
+
+    <div class="table-container">
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th class="day-column">روز</th>
+                    <th>نام و اتاق</th>
+                    <th>نام و اتاق</th>
+                    <th>نام و اتاق</th>
+                    <th>نام و اتاق</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // داده‌های JSON طبق ساختار درخواستی شما
+        const scheduleData = [
+            {
+                day: "شنبه",
+                rooms: [
+                    { room: "اتاق5", person: "یاسمن خانم " },
+                    { room: "اتاق 3", person: "اقا سهراب" },
+                ]
+            },
+            {
+                day: "یکشنبه",
+                rooms: [
+                    { room: "اتاق5", person: "یاسمن خانم" },
+                    { room: "اتاق 4", person: "مرجان خانم" }
+                ]
+            },
+            { day: "دوشنبه", rooms: [{ room: "اتاق 6", person: "اقا یونس" }, { room: "اتاق 2", person: "اقا امیر" }] },
+            { day: "سه‌شنبه", rooms: [ { room: "اتاق 1", person: "اقا حسمام" }] },
+            { day: "چهارشنبه", rooms: [{ room: "اتاق 3", person: "اقا سهراب" },{ room: "اتاق 2", person: "اقا امیر" }] }, 
+            { day: "پنجشنبه", rooms: [{ room: "اتاق 5", person: "فاطمه خانم" }, { room: "اتاق 1", person: "اقا حسمام" }] }, 
+            { day: "جمعه", rooms: [{ room: "اتاق 4", person: "مرجان خانم" }, { room: "اتاق 6", person: "اقا یونس" }, { room: "اتاق 2", person: "اقا سعید " }] },
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            
+            scheduleData.forEach(data => {
+                const tr = document.createElement('tr');
+
+                // ستون اول: روز هفته
+                const dayTd = document.createElement('td');
+                dayTd.className = 'day-column';
+                dayTd.textContent = data.day;
+                tr.appendChild(dayTd);
+
+                // تقسیم افراد به ۴ ستون (مطابق عکس)
+                // در این مثال برای سادگی، افراد را در ستون‌ها پخش می‌کنیم
+                for (let i = 0; i < 4; i++) {
+                    const td = document.createElement('td');
+                    const list = document.createElement('div');
+                    list.className = 'entry-list';
+
+                    // اگر داده‌ای برای این بخش وجود داشت نمایش بده (در اینجا فرضی هر ستون ۱ نفر)
+                    if (data.rooms[i]) {
+                        const item = document.createElement('div');
+                        item.className = 'entry-item';
+                        item.textContent = `${data.rooms[i].person} - ${data.rooms[i].room}`;
+                        list.appendChild(item);
+                        
+                        // اضافه کردن خطوط خالی برای حفظ ظاهر شبیه عکس
+                        for(let j=0; j<3; j++) {
+                            const empty = document.createElement('div');
+                            empty.className = 'entry-item';
+                            empty.innerHTML = '&nbsp;';
+                            list.appendChild(empty);
+                        }
+                    } else {
+                        // ایجاد خطوط خالی اگر داده‌ای نبود
+                        for(let j=0; j<4; j++) {
+                            const empty = document.createElement('div');
+                            empty.className = 'entry-item';
+                            empty.innerHTML = '&nbsp;';
+                            list.appendChild(empty);
+                        }
+                    }
+
+                    td.appendChild(list);
+                    tr.appendChild(td);
+                }
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        window.onload = renderTable;
+    </script>
+
+<div style="direction: rtl; font-family: Vazirmatn, Arial, sans-serif; background: #f7f7f7; padding: 15px; border-radius: 10px; width: fit-content;">
+
+  <p style="color: #d32f2f; font-size: 30px; margin: 8px 0;">
+    🚫 استفاده از لباسشویی خارج برنامه بدون هماهنگی ممنوع می باشد
+  </p>
+
+  <p style="color: #f57c00; font-size: 30px; margin: 8px 0;">
+    ⏰ شستوشوی لباس بعد از ساعت 23:00 ممنوع است
+  </p>
+
+  <p style="color: #6d4c41; font-size: 30px; margin: 8px 0;">
+    👟 شستوشوی کفش در لباسشویی ممنوع است
+  </p>
+
+  <p style="color: #2e7d32; font-size: 30px; margin: 8px 0;">
+    🧺 هر اتاق 1 بار اجازه استفاده از لباسشویی در روز مشخص خود را دارد
+  </p>
+
+</div>
+</body>
+</html>
